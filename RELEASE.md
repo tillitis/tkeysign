@@ -1,8 +1,13 @@
 # Release notes
 
+## unreleased
+
+- Remove PH signature command.
+- Add get firmware digest command.
+
 ## v0.0.7
 
-Just ripped from 
+Just ripped from
 
 https://github.com/tillitis/tillitis-key1-apps
 

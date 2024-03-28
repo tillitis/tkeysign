@@ -25,18 +25,18 @@ import (
 )
 
 var (
-	cmdGetPubkey      = appCmd{0x01, "cmdGetPubkey", tkeyclient.CmdLen1}
-	rspGetPubkey      = appCmd{0x02, "rspGetPubkey", tkeyclient.CmdLen128}
-	cmdSetSize        = appCmd{0x03, "cmdSetSize", tkeyclient.CmdLen32}
-	rspSetSize        = appCmd{0x04, "rspSetSize", tkeyclient.CmdLen4}
-	cmdSignData       = appCmd{0x05, "cmdSignData", tkeyclient.CmdLen128}
-	rspSignData       = appCmd{0x06, "rspSignData", tkeyclient.CmdLen4}
-	cmdGetSig         = appCmd{0x07, "cmdGetSig", tkeyclient.CmdLen1}
-	rspGetSig         = appCmd{0x08, "rspGetSig", tkeyclient.CmdLen128}
-	cmdGetNameVersion = appCmd{0x09, "cmdGetNameVersion", tkeyclient.CmdLen1}
-	rspGetNameVersion = appCmd{0x0a, "rspGetNameVersion", tkeyclient.CmdLen32}
-	cmdSignPhData     = appCmd{0x0b, "cmdSignPhData", tkeyclient.CmdLen128}
-	rspSignPhData     = appCmd{0x0c, "rspSigPhnData", tkeyclient.CmdLen4}
+	cmdGetPubkey       = appCmd{0x01, "cmdGetPubkey", tkeyclient.CmdLen1}
+	rspGetPubkey       = appCmd{0x02, "rspGetPubkey", tkeyclient.CmdLen128}
+	cmdSetSize         = appCmd{0x03, "cmdSetSize", tkeyclient.CmdLen32}
+	rspSetSize         = appCmd{0x04, "rspSetSize", tkeyclient.CmdLen4}
+	cmdSignData        = appCmd{0x05, "cmdSignData", tkeyclient.CmdLen128}
+	rspSignData        = appCmd{0x06, "rspSignData", tkeyclient.CmdLen4}
+	cmdGetSig          = appCmd{0x07, "cmdGetSig", tkeyclient.CmdLen1}
+	rspGetSig          = appCmd{0x08, "rspGetSig", tkeyclient.CmdLen128}
+	cmdGetNameVersion  = appCmd{0x09, "cmdGetNameVersion", tkeyclient.CmdLen1}
+	rspGetNameVersion  = appCmd{0x0a, "rspGetNameVersion", tkeyclient.CmdLen32}
+	cmdGetFirmwareHash = appCmd{0x0b, "cmdGetFirmwareHash", tkeyclient.CmdLen32}
+	rspGetFirmwareHash = appCmd{0x0c, "rspGetFirmwareHash", tkeyclient.CmdLen128}
 )
 
 const MaxSignSize = 4096
@@ -271,37 +271,40 @@ func (s Signer) getSig() ([]byte, error) {
 	return rx[3 : 3+64], nil
 }
 
-// SignPh signs a SHA512 pre-hashed message in data and returns an
-// ed25519ph signature.
-func (s Signer) SignPh(data [64]byte) ([]byte, error) {
+// GetFWDigest asks the signer app to hash len bytes of the firmware.
+//
+// It returns the resulting SHA512 digest or an error.
+func (s Signer) GetFWDigest(len int) ([]byte, error) {
 	id := 2
-	tx, err := tkeyclient.NewFrameBuf(cmdSignPhData, id)
+	tx, err := tkeyclient.NewFrameBuf(cmdGetFirmwareHash, id)
 	if err != nil {
 		return nil, fmt.Errorf("NewFrameBuf: %w", err)
 	}
 
-	copy(tx[2:], data[:])
+	// Set firmware length as 32 bit LE
+	tx[2] = byte(len)
+	tx[3] = byte(len >> 8)
+	tx[4] = byte(len >> 16)
+	tx[5] = byte(len >> 24)
 
-	tkeyclient.Dump("LoadSignPhData tx", tx)
+	tkeyclient.Dump("GetFirmwareHash tx", tx)
 	if err = s.tk.Write(tx); err != nil {
 		return nil, fmt.Errorf("Write: %w", err)
 	}
 
 	// Wait for reply
-	rx, _, err := s.tk.ReadFrame(rspSignPhData, id)
+	rx, _, err := s.tk.ReadFrame(rspGetFirmwareHash, id)
 	if err != nil {
 		return nil, fmt.Errorf("ReadFrame: %w", err)
 	}
 
+	tkeyclient.Dump("GetFirmwareHash rx", rx)
+
 	if rx[2] != tkeyclient.StatusOK {
-		return nil, fmt.Errorf("SignData NOK")
+		return nil, fmt.Errorf("GetFirmwareHash NOK")
 	}
 
-	// Get the signature
-	signature, err := s.getSig()
-	if err != nil {
-		return nil, fmt.Errorf("getSig: %w", err)
-	}
-
-	return signature, nil
+	// Skip frame header, app header, and status; returning
+	// firmware SHA512 digest
+	return rx[3 : 3+64], nil
 }
