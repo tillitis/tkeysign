@@ -2,15 +2,17 @@
 
 # Tillitis TKey Sign package
 
-A Go package for communicating with the `signer` device app on a
+A Go package for communicating with the [`signer` device
+app](https://github.com/tillitis/tkey-device-signer) on a
 [Tillitis](https://tillitis.se/) TKey to get cryptographic signatures
 over a message.
 
 See the [Go doc](https://pkg.go.dev/github.com/tillitis/tkeysign)
 for `tkeysign` for details on how to call the functions.
 
-See [apps repo](https://github.com/tillitis/tillitis-key1-apps/) for
-example client and device applications, including `signer`.
+See [tkey-ssh-agent](https://github.com/tillitis/tkey-ssh-agent) and
+[tkey-sign-cli](https://github.com/tillitis/tkey-sign-cli) for client
+applications using this go package.
 
 Release notes in [RELEASE.md](RELEASE.md).
 
