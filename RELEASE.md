@@ -1,9 +1,11 @@
 # Release notes
 
-## unreleased
+## v1.0.0
 
-- Remove PH signature command.
+- Remove (unreleased) PH signature command.
 - Add get firmware digest command.
+- Update CI to use tkey-builder:4.
+- Bump tkeyclient to 1.0.0.
 
 ## v0.0.7
 
