@@ -187,13 +187,13 @@ func (s Signer) setSize(size int) error {
 	tx[3] = byte(size >> 8)
 	tx[4] = byte(size >> 16)
 	tx[5] = byte(size >> 24)
-	tkeyclient.Dump("SetAppSize tx", tx)
+	tkeyclient.Dump("SetSignSize tx", tx)
 	if err = s.tk.Write(tx); err != nil {
 		return fmt.Errorf("Write: %w", err)
 	}
 
 	rx, _, err := s.tk.ReadFrame(rspSetSize, id)
-	tkeyclient.Dump("SetAppSize rx", rx)
+	tkeyclient.Dump("SetSignize rx", rx)
 	if err != nil {
 		return fmt.Errorf("ReadFrame: %w", err)
 	}
