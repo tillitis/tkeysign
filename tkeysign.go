@@ -1,5 +1,5 @@
 // Copyright (C) 2022-2024 - Tillitis AB
-// SPDX-License-Identifier: GPL-2.0-only
+// SPDX-License-Identifier: BSD-2-Clause
 
 // Package tkeysign provides a connection to the ed25519 signer app
 // running on the TKey. You're expected to pass an existing connection
