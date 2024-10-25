@@ -186,7 +186,7 @@ func (s Signer) setSize(size int) error {
 	}
 
 	rx, _, err := s.tk.ReadFrame(rspSetSize, id)
-	tkeyclient.Dump("SetSignize rx", rx)
+	tkeyclient.Dump("SetSignSize rx", rx)
 	if err != nil {
 		return fmt.Errorf("ReadFrame: %w", err)
 	}
