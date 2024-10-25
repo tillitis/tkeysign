@@ -104,19 +104,12 @@ func (s Signer) GetAppNameVersion() (*tkeyclient.NameVersion, error) {
 		return nil, fmt.Errorf("Write: %w", err)
 	}
 
-	err = s.tk.SetReadTimeout(2)
-	if err != nil {
-		return nil, fmt.Errorf("SetReadTimeout: %w", err)
-	}
+	s.tk.SetReadTimeoutNoErr(2)
+	defer s.tk.SetReadTimeoutNoErr(0)
 
 	rx, _, err := s.tk.ReadFrame(rspGetNameVersion, id)
 	if err != nil {
 		return nil, fmt.Errorf("ReadFrame: %w", err)
-	}
-
-	err = s.tk.SetReadTimeout(0)
-	if err != nil {
-		return nil, fmt.Errorf("SetReadTimeout: %w", err)
 	}
 
 	nameVer := &tkeyclient.NameVersion{}
