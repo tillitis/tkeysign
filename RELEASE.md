@@ -1,5 +1,12 @@
 # Release notes
 
+## v1.1.0
+
+- Update tkeyclient to v1.2.0
+
+Complete
+[changelog](https://github.com/tillitis/tkeysign/compare/v1.0.1...v1.1.0).
+
 ## v1.0.1
 
 - Change license to BSD-2-Clause
