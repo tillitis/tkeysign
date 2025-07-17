@@ -7,6 +7,7 @@
 //
 //	tk := tkeyclient.New()
 //	err := tk.Connect(port)
+//	err := tk.LoadApp(appBinary, secretPhrase)
 //	signer := tkeysign.New(tk)
 //
 // Then use it like this to get the public key of the TKey:
